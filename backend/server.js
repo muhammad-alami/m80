@@ -5,6 +5,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
+
 
 const app = express();
 
@@ -22,20 +24,62 @@ const JWT_SECRET = process.env.JWT_SECRET || 'dev_secret_change_me';
 const VALID_USERNAME = 'Muhammad';
 const VALID_PASSWORD = 'Muhammad';
 
-// hardcoded chart data
-// Example chart data for Summary page
+
+// --- Chart data for the M80 antibiotics story ---
+
+// Data for the Summary page chart
 const summaryChartData = {
-  title: 'Example Summary Chart: Monthly Usage of M80 AI Tool',
-  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-  values: [10, 25, 40, 60, 80]
+  title: 'AI-Designed Antibiotics: From Virtual Candidates to Lead Drugs',
+  labels: [
+    'AI candidates evaluated',
+    'Synthesizable candidates',
+    'Synthesized in lab',
+    'Active compounds',
+    'Lead compounds (NG1 & DN1)'
+  ],
+  values: [300, 80, 24, 7, 2],
+  description:
+    'Pipeline inspired by the antibiotics study: hundreds of AI-designed molecules were evaluated in silico, a subset looked synthesizable, 24 were made in the lab, 7 showed antibacterial activity, and 2 (NG1 and DN1) emerged as lead candidates.'
 };
 
-// Example chart data for Reports page
+// Data for the Reports page chart
 const reportsChartData = {
-  title: 'Example Reports Chart: Model Accuracy Over Versions',
-  labels: ['v1', 'v2', 'v3', 'v4'],
-  values: [70, 78, 85, 90]
+  title: 'Hit Rates: Traditional Screening vs Generative AI Antibiotic Design',
+  labels: ['Active hits (%)', 'Lead compounds (%)'],
+  traditional: [1.0, 0.3],
+  generative: [2.3, 0.7],
+  description:
+    'Illustrative comparison of success rates in antibiotic discovery. Traditional screening yields relatively few active or lead compounds per 300 candidates, while the generative AI approach in the study produced more active molecules and two strong leads from a similar search space.'
 };
+
+
+
+// MongoDB connection
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/m80';
+
+mongoose
+  .connect(MONGO_URI)
+  .then(() => {
+    console.log('Connected to MongoDB');
+  })
+  .catch((err) => {
+    console.error('MongoDB connection error:', err);
+  });
+
+// Simple Chart schema and model
+const chartSchema = new mongoose.Schema({
+  key: { type: String, required: true, unique: true }, // 'summary' or 'reports'
+  title: String,
+  labels: [String],
+  values: [Number],
+  traditional: [Number],
+  generative: [Number],
+  description: String
+});
+
+const Chart = mongoose.model('Chart', chartSchema);
+
+
 
 
 //health check
@@ -94,6 +138,9 @@ function authenticateToken(req, res, next) {
   });
 }
 
+
+
+
 // Example protected route to test auth
 app.get('/api/protected', authenticateToken, (req, res) => {
   res.json({
@@ -102,15 +149,40 @@ app.get('/api/protected', authenticateToken, (req, res) => {
   });
 });
 
-// Summary chart endpoint (protected)
-app.get('/api/summary-chart', authenticateToken, (req, res) => {
-  res.json(summaryChartData);
+
+// Summary chart endpoint (protected, reads from Mongo)
+app.get('/api/summary-chart', authenticateToken, async (req, res) => {
+  try {
+    const chart = await Chart.findOne({ key: 'summary' }).lean();
+
+    if (!chart) {
+      return res.status(404).json({ error: 'Summary chart not found' });
+    }
+
+    res.json(chart);
+  } catch (err) {
+    console.error('Error fetching summary chart:', err);
+    res.status(500).json({ error: 'Server error fetching summary chart' });
+  }
 });
 
-//Reports chart endpoint (protected)
-app.get('/api/reports-chart', authenticateToken, (req, res) => {
-  res.json(reportsChartData);
+// Reports chart endpoint (protected, reads from Mongo)
+app.get('/api/reports-chart', authenticateToken, async (req, res) => {
+  try {
+    const chart = await Chart.findOne({ key: 'reports' }).lean();
+
+    if (!chart) {
+      return res.status(404).json({ error: 'Reports chart not found' });
+    }
+
+    res.json(chart);
+  } catch (err) {
+    console.error('Error fetching reports chart:', err);
+    res.status(500).json({ error: 'Server error fetching reports chart' });
+  }
 });
+
+
 
 
 // Start the server
