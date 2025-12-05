@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { API_BASE_URL } from '../config.js';
 import {
   BarChart,
   Bar,
@@ -23,7 +24,7 @@ function SummaryPage() {
       try {
         const token = localStorage.getItem('token');
 
-        const response = await fetch('http://localhost:3000/api/summary-chart', {
+        const res = await fetch(`${API_BASE_URL}/summary-chart`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
