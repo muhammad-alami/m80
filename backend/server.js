@@ -25,9 +25,9 @@ const VALID_USERNAME = 'Muhammad';
 const VALID_PASSWORD = 'Muhammad';
 
 
-// --- Chart data for the M80 antibiotics story ---
+// Chart data for the M80 antibiotics story
 
-// Data for the Summary page chart
+// Data for the Summary page
 const summaryChartData = {
   title: 'AI-Designed Antibiotics: From Virtual Candidates to Lead Drugs',
   labels: [

@@ -1,39 +1,61 @@
+// src/pages/DashboardPage.jsx
+
+import React from 'react';
+
 function DashboardPage() {
   return (
-    <section>
-      <h2>Dashboard</h2>
+    <main>
+      <h1>Generative AI for Antibiotic Discovery</h1>
 
-      <h3>Project Topic: Generative AI for Antibiotic Discovery</h3>
+      {/* 200-word-ish summary of the article */}
       <p>
-        M80 focuses on a recent generative AI breakthrough in the fight against antibiotic-resistant
-        bacteria. Researchers built deep learning models that can design entirely new antibiotic
-        molecules instead of only screening existing ones. These models are trained on many
-        thousands of chemical structures and learn which fragments are likely to have strong
-        antibacterial activity while remaining safe and drug-like. In the study, the team used
-        generative models that either expand a known active fragment or grow a molecule step by
-        step, starting from a single atom. From several hundred AI-designed candidates, chemists
-        were able to synthesize a smaller set in the lab. Seven of these compounds showed real
-        antibiotic activity, and two lead molecules &mdash; NG1 and DN1 &mdash; were especially
-        effective against multidrug-resistant gonorrhea, with DN1 also killing MRSA. This work
-        shows how generative AI can move beyond discovery into true molecular design, potentially
-        speeding up the development of much-needed new antibiotics.
+        M80 focuses on a recent generative AI breakthrough in the fight against
+        antibiotic-resistant bacteria. Researchers at the Broad Institute of MIT
+        and Harvard, together with collaborators, built deep learning models that
+        can design entirely new antibiotic molecules instead of only screening
+        existing ones. These models are trained on tens of thousands of chemical
+        structures and learn which fragments are likely to have strong
+        antibacterial activity while still remaining non-toxic and drug-like.
+        In the study, the team used two generative AI platforms. One model
+        started from a known active fragment and “decorated” it by adding atoms
+        and bonds, scoring each new compound for its ability to kill bacteria and
+        its likelihood of being safe. The second model built molecules starting
+        from a single atom and grew them step by step. From several hundred
+        AI-designed candidates, chemists synthesized 24 molecules in the lab;
+        seven showed real antibiotic effects, and two lead compounds – NG1 and
+        DN1 – were especially effective against multidrug-resistant gonorrhea,
+        with DN1 also killing MRSA.
       </p>
 
+      {/* Source URL */}
       <p>
-        <strong>Source:</strong>{' '}
+        <strong>Source:&nbsp;</strong>
         <a
           href="https://www.fiercebiotech.com/research/deep-learning-generative-ai-models-build-new-antibiotics-starting-single-atom"
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
         >
-          Generative AI models build new antibiotics starting from a single atom
+          FierceBiotech – Generative AI models build new antibiotics starting
+          from a single atom
         </a>
-        .
       </p>
 
-      <h3>Technical Overview of M80</h3>
-      <p>
-        M80 is built as a decoupled single page application. The backend is a Node.js and Express
-        server running on port 3000. It exposes a login endpoint that returns a JSON Web Token
-        (JWT), plus two protected endpoints that provide chart data about the antibiotic pipeline
-        and hit rates. Chart data is stored in MongoDB and re
+      {/* Tech stack / infrastructure paragraph */}
+	<p>
+  This M80 project uses a fully decoupled architecture consisting of a Node.js and
+  Express backend running on port 3000, and a React single-page application built
+  with Vite and served through NGINX on port 80. The backend exposes protected
+  endpoints using JSON Web Tokens (JWT), including routes for user authentication,
+  a health check, and two chart data sources (Summary and Reports). All chart data
+  is stored in MongoDB and retrieved via authenticated HTTP GET requests from the
+  frontend. NGINX is configured both to serve the React build files and to
+  reverse-proxy any request beginning with <code>/api</code> to the backend
+  service, enabling the frontend and backend to operate independently while
+  appearing as a unified application to the user.
+	</p>
+    </main>
+  );
+}
+
+export default DashboardPage;
+

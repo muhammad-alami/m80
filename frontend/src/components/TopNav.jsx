@@ -4,8 +4,8 @@ function TopNav() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Phase 5: we will clear the JWT token here.
-    // For now, just send user to login page.
+    // Clear JWT from localStorage and send user back to login
+    localStorage.removeItem('token');
     navigate('/login');
   };
 
